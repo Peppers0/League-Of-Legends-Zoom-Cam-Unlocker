@@ -2,4 +2,6 @@
 
 - External zoom unlocker for League Of Lenegnds written in C++
 
-![image](https://user-images.githubusercontent.com/42891941/122645327-b4f54c00-d122-11eb-8d08-93c57adb76da.png)
+![image](https://user-images.githubusercontent.com/42891941/122651021-cf3d2300-d13e-11eb-9ef8-ed8658ba057d.png)
+
+![image](https://user-images.githubusercontent.com/42891941/122651027-d6fcc780-d13e-11eb-8964-9e0b09717c23.png)
