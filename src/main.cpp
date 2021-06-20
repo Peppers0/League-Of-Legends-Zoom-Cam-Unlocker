@@ -123,7 +123,7 @@ int main() {
 
     DWORD PointerBaseAddress = GetThreadstackStartAddress(0, pID, processHandle);
     DWORD offsetGameToBaseAdress = -0x00000194;
-    std::vector<DWORD> pointsOffsets{ 0x8, 0x10, 0x3AC, 0x84, 0x260 };
+    std::vector<DWORD> pointsOffsets{ 0x8, 0x10, 0x3AC, 0x84, 0x254 };
     DWORD baseAddress = NULL;
     //Get value at gamebase+offset -> store it in baseAddress
     ReadProcessMemory(processHandle, (LPVOID)(PointerBaseAddress + offsetGameToBaseAdress), &baseAddress, sizeof(baseAddress), NULL);
@@ -135,11 +135,51 @@ int main() {
         //std::cout << "debugginfo: Value at offset = " << std::hex << pointsAddress << std::endl;
     }
     pointsAddress += pointsOffsets.at(pointsOffsets.size() - 1); //Add Last offset -> done!!
-    float zoomValue = 0;
-    //"UI"
 
+    //left and right offset
+    std::vector<DWORD> pointsOffsets2{ 0x8, 0x10, 0x3AC, 0x84, 0x170 };
+    
+    DWORD pointsAddress2 = baseAddress;
+   
+    for (int i = 0; i < pointsOffsets2.size() - 1; i++)
+    {
+        ReadProcessMemory(processHandle, (LPVOID)(pointsAddress2 + pointsOffsets2.at(i)), &pointsAddress2, sizeof(pointsAddress2), NULL);
+        
+    }
+    pointsAddress2 += pointsOffsets2.at(pointsOffsets2.size() - 1);
+
+    //up and down offset
+    std::vector<DWORD> pointsOffsets3{ 0x8, 0x10, 0x3AC, 0x84, 0x168 };
+
+    DWORD pointsAddress3 = baseAddress;
+
+    for (int i = 0; i < pointsOffsets3.size() - 1; i++)
+    {
+        ReadProcessMemory(processHandle, (LPVOID)(pointsAddress3 + pointsOffsets3.at(i)), &pointsAddress3, sizeof(pointsAddress3), NULL);
+
+    }
+    pointsAddress3 += pointsOffsets3.at(pointsOffsets3.size() - 1);
+
+
+    float zoomValue = 0;
+    float leftNright = 0;
+    float upNdown = 0;
+
+    float zoomValueReset = 1.281169772;
+    float leftNrightReset = 180;
+    float upNdownReset = 56;
+
+    //"UI"
+    std::cout << "Up arrow rotates the camera UP" << std::endl;
+    std::cout << "Down arrow rotates the camera DOWN" << std::endl;
+    std::cout << "Left arrow rotates the camera LEFT" << std::endl;
+    std::cout << "Right arrow rotates the camera RIGHT" << std::endl;
     std::cout << "Numpad + zoom in" << std::endl;
     std::cout << "Numpad - zoom out" << std::endl;
+    std::cout << "Numpad 0 Reset" << std::endl;
+    std::cout << "Numpad 1 Restore" << std::endl;
+
+    std::cout << "---------------------------------------------------------------------------" << std::endl;
     std::cout << "If the Unlocker doesn't work Press Delete to reload it!" << std::endl;
 
     while (true) {
@@ -148,20 +188,75 @@ int main() {
         {
             goto reload;
         }
+
+        if (GetAsyncKeyState(VK_NUMPAD0)) //restart
+        {
+            WriteProcessMemory(processHandle, (LPVOID)(pointsAddress), &zoomValueReset, sizeof(float), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(pointsAddress2), &leftNrightReset, sizeof(float), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(pointsAddress3), &upNdownReset, sizeof(float), 0);
+
+        }
+
+        if (GetAsyncKeyState(VK_NUMPAD1)) //restore
+        {
+            WriteProcessMemory(processHandle, (LPVOID)(pointsAddress), &zoomValue, sizeof(float), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(pointsAddress2), &leftNright, sizeof(float), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(pointsAddress3), &upNdown, sizeof(float), 0);
+
+        }
+
         if (GetAsyncKeyState(VK_ADD)) //numpad +
         {
             
             ReadProcessMemory(processHandle, (LPCVOID)(pointsAddress), &zoomValue, sizeof(float), NULL);
-            zoomValue -= 150;
+            zoomValue -= 0.1;
             WriteProcessMemory(processHandle, (LPVOID)(pointsAddress), &zoomValue, sizeof(float), 0);
         }
+
         if (GetAsyncKeyState(VK_SUBTRACT)) // numpad -
         {
             
             ReadProcessMemory(processHandle, (LPCVOID)(pointsAddress), &zoomValue, sizeof(float), NULL);
-            zoomValue += 150;
+            zoomValue += 0.1;
             WriteProcessMemory(processHandle, (LPVOID)(pointsAddress), &zoomValue, sizeof(float), 0);
         }
+
+        if (GetAsyncKeyState(VK_LEFT)) // LEFT ARROW
+        {
+            ReadProcessMemory(processHandle, (LPCVOID)(pointsAddress2), &leftNright, sizeof(float), NULL);
+            
+            leftNright +=10;
+
+            WriteProcessMemory(processHandle, (LPVOID)(pointsAddress2), &leftNright, sizeof(float), 0);
+        }
+        if (GetAsyncKeyState(VK_RIGHT)) // RIGHT ARROW
+        {
+
+            ReadProcessMemory(processHandle, (LPCVOID)(pointsAddress2), &leftNright, sizeof(float), NULL);
+           
+            leftNright -= 10;
+
+            WriteProcessMemory(processHandle, (LPVOID)(pointsAddress2), &leftNright, sizeof(float), 0);
+        }
+
+        if (GetAsyncKeyState(VK_UP)) // UP ARROW
+        {
+            ReadProcessMemory(processHandle, (LPCVOID)(pointsAddress3), &upNdown, sizeof(float), NULL);
+
+            upNdown += 10;
+
+            WriteProcessMemory(processHandle, (LPVOID)(pointsAddress3), &upNdown, sizeof(float), 0);
+        }
+        if (GetAsyncKeyState(VK_DOWN)) // DOWN ARROW
+        {
+
+            ReadProcessMemory(processHandle, (LPCVOID)(pointsAddress3), &upNdown, sizeof(float), NULL);
+
+            upNdown -= 10;
+
+            WriteProcessMemory(processHandle, (LPVOID)(pointsAddress3), &upNdown, sizeof(float), 0);
+        }
+
     }
 
 }
