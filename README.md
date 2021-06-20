@@ -2,6 +2,7 @@
 
 - External zoom/cam unlocker for League Of Lenegnds written in C++
 - [Download](https://github.com/Vili1/League-Of-Legends-Zoom-Cam-Unlocker/releases/)
+- [New Youtube Video](https://youtu.be/aE07SROVGos)
 - [Youtube Video](https://youtu.be/Cz2xtrBvgnc)
 
 ![image](https://user-images.githubusercontent.com/42891941/122689084-d8a2ba00-d228-11eb-9e4d-aeb100966e8b.png)
